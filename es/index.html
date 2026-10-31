@@ -361,9 +361,18 @@ html[data-motion="paused"] .ribbon ul { flex-wrap:wrap; gap:1.5rem 3rem; padding
 html[data-motion="paused"] .ribbon ul[aria-hidden="true"] { display:none; }
 html[data-motion="paused"] .ribbon li { white-space:normal; overflow-wrap:anywhere; }
 @media (prefers-reduced-motion: reduce) { .motion-control { display:none; } }
+
+.motion-control { right: calc(58px + env(safe-area-inset-right, 0px)); }
+.share-control { position: fixed; top: calc(62px + env(safe-area-inset-top, 0px)); right: calc(14px + env(safe-area-inset-right, 0px)); z-index: 20; display: grid; place-items: center; width: 36px; height: 36px; padding: 9px; border: 1px solid var(--line); border-radius: 50%; background: var(--bg); color: var(--ink-soft); cursor: pointer; }
+.share-control svg { display: block; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.share-control::after { content: attr(aria-label); position: absolute; right: 0; top: calc(100% + 8px); padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: 400 .75rem/1.3 var(--body); white-space: nowrap; visibility: hidden; opacity: 0; pointer-events: none; }
+.share-control:focus-visible::after, .share-control[data-copied]::after { visibility: visible; opacity: 1; }
+@media (hover: hover) { .share-control:hover::after { visibility: visible; opacity: 1; } }
+.share-control:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.share-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 </style>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<noscript><style>.motion-control{display:none}.skip { display: none; }.ribbon { width:100%; animation:none; }.ribbon ul { flex-wrap:wrap; }.ribbon li { white-space:normal; }.ribbon ul[aria-hidden="true"] { display:none; }</style></noscript>
+<noscript><style>.share-control{display:none}.motion-control{display:none}.skip { display: none; }.ribbon { width:100%; animation:none; }.ribbon ul { flex-wrap:wrap; }.ribbon li { white-space:normal; }.ribbon ul[aria-hidden="true"] { display:none; }</style></noscript>
 </head>
 <body>
 
@@ -386,6 +395,8 @@ html[data-motion="paused"] .ribbon li { white-space:normal; overflow-wrap:anywhe
   <a id="lang-en" lang="en" hreflang="en" aria-label="EN — English" href="/en/">EN</a>
 </nav>
 <button type="button" class="motion-control" id="motion-control" aria-pressed="false" aria-label="Pausar movimiento"><svg class="motion-pause" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="3" y="2" width="3" height="12" rx=".5"/><rect x="10" y="2" width="3" height="12" rx=".5"/></svg><svg class="motion-play" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 2.5 13 8 4 13.5Z"/></svg></button>
+<button type="button" class="share-control" id="share-control" aria-label="Compartir página"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 10V1.5M5 4.5l3-3 3 3M4 6H2.5v8h11V6H12"/></svg></button>
+<span class="share-status" id="share-status" role="status" aria-live="polite"></span>
 
 <header class="hero">
   <canvas id="scene" aria-hidden="true"></canvas>
@@ -706,5 +717,35 @@ html[data-motion="paused"] .ribbon li { white-space:normal; overflow-wrap:anywhe
 })();
 </script>
 
+<script>
+(function () {
+  var button = document.getElementById('share-control');
+  var status = document.getElementById('share-status');
+  var labels = ["Compartir página","Enlace copiado","Copiar este enlace:"];
+  var timer;
+  button.addEventListener('click', async function () {
+    var url = document.querySelector('link[rel="canonical"]').href;
+    clearTimeout(timer);
+    status.textContent = '';
+    button.removeAttribute('data-copied');
+    button.setAttribute('aria-label', labels[0]);
+    button.disabled = true;
+    try {
+      if (navigator.share) {
+        try { await navigator.share({title: document.title, url: url}); return; }
+        catch (error) { if (error.name === 'AbortError') return; }
+      }
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(url);
+        status.textContent = labels[1];
+        button.setAttribute('aria-label', labels[1]);
+        button.setAttribute('data-copied', '');
+        timer = setTimeout(function () { button.removeAttribute('data-copied'); button.setAttribute('aria-label', labels[0]); status.textContent = ''; }, 3000);
+      } catch (error) { window.prompt(labels[2], url); }
+    } finally { button.disabled = false; }
+  });
+})();
+</script>
 </body>
 </html>
