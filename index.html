@@ -344,7 +344,14 @@ footer {
 
 }
 
-.motion-control { position: fixed; top: calc(62px + env(safe-area-inset-top, 0px)); right: calc(14px + env(safe-area-inset-right, 0px)); z-index: 20; padding: 7px 11px; min-height: 32px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink-soft); font: 400 .75rem/1.2 var(--body); cursor: pointer; }
+.motion-control { position: fixed; top: calc(62px + env(safe-area-inset-top, 0px)); right: calc(14px + env(safe-area-inset-right, 0px)); z-index: 20; display: grid; place-items: center; width: 36px; height: 36px; padding: 9px; border: 1px solid var(--line); border-radius: 50%; background: var(--bg); color: var(--ink-soft); cursor: pointer; }
+.motion-control svg { display: block; width: 16px; height: 16px; fill: currentColor; }
+.motion-control .motion-play { display: none; }
+.motion-control[aria-pressed="true"] .motion-pause { display: none; }
+.motion-control[aria-pressed="true"] .motion-play { display: block; }
+.motion-control::after { content: attr(aria-label); position: absolute; right: calc(100% + 8px); top: 50%; transform: translateY(-50%); padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: 400 .75rem/1.3 var(--body); white-space: nowrap; visibility: hidden; opacity: 0; pointer-events: none; }
+.motion-control:focus-visible::after { visibility: visible; opacity: 1; }
+@media (hover: hover) { .motion-control:hover::after { visibility: visible; opacity: 1; } }
 .motion-control:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 html[data-motion="paused"] { scroll-behavior: auto; }
 html[data-motion="paused"] *, html[data-motion="paused"] *::before, html[data-motion="paused"] *::after { animation-play-state: paused !important; transition: none !important; }
@@ -378,7 +385,7 @@ html[data-motion="paused"] .ribbon li { white-space:normal; overflow-wrap:anywhe
   <a id="lang-es" lang="es" hreflang="es" aria-label="ES — Español" href="/es/">ES</a>
   <a id="lang-en" lang="en" hreflang="en" aria-label="EN — English" href="/en/">EN</a>
 </nav>
-<button type="button" class="motion-control" id="motion-control" aria-pressed="false">Pausar movimento</button>
+<button type="button" class="motion-control" id="motion-control" aria-pressed="false" aria-label="Pausar movimento"><svg class="motion-pause" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="3" y="2" width="3" height="12" rx=".5"/><rect x="10" y="2" width="3" height="12" rx=".5"/></svg><svg class="motion-play" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 2.5 13 8 4 13.5Z"/></svg></button>
 
 <header class="hero">
   <canvas id="scene" aria-hidden="true"></canvas>
@@ -673,7 +680,7 @@ html[data-motion="paused"] .ribbon li { white-space:normal; overflow-wrap:anywhe
   function applyMotion() {
     reduce = paused || systemMotion.matches;
     if (reduce) root.setAttribute('data-motion', 'paused'); else root.removeAttribute('data-motion');
-    motionButton.textContent = paused ? "Retomar movimento" : "Pausar movimento";
+    motionButton.setAttribute('aria-label', paused ? "Retomar movimento" : "Pausar movimento");
     motionButton.setAttribute('aria-pressed', String(paused));
     cancelAnimationFrame(canvasFrame);
     if (reduce) { prog = 1; if (!introDone) finishIntro(); readEls.forEach(function(el) { el.querySelectorAll('.w').forEach(function(w) { w.classList.add('lit'); }); }); }
