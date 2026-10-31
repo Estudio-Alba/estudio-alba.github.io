@@ -8,6 +8,10 @@
 <meta property="og:title" content="ALBA · Marketing Boutique">
 <meta property="og:description" content="Damos luz a ideias em que acreditamos.">
 <link rel="canonical" href="https://estudioalba.com/">
+<link rel="alternate" hreflang="pt-PT" href="https://estudioalba.com/">
+<link rel="alternate" hreflang="es" href="https://estudioalba.com/es/">
+<link rel="alternate" hreflang="en" href="https://estudioalba.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://estudioalba.com/">
 <meta property="og:url" content="https://estudioalba.com/">
 <meta property="og:site_name" content="ALBA">
 <meta property="og:locale" content="pt_PT">
@@ -17,8 +21,8 @@
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#F4F3F1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0D0D0C" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tenor+Sans&family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;1,300&display=swap">
@@ -91,7 +95,8 @@ body {
   border: 1px solid var(--line);
   transition: opacity 1s ease;
 }
-.lang button {
+.lang a {
+  text-decoration: none;
   font: 500 0.72rem/1 var(--body);
   letter-spacing: 0.14em;
   color: var(--ink-soft);
@@ -102,8 +107,8 @@ body {
   cursor: pointer;
   transition: background .3s, color .3s;
 }
-.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.lang button:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+.lang a[aria-current="page"] { background: var(--ink); color: var(--bg); }
+.lang a:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
 
 /* ——— Cena: céu, sol, ria ——— */
 .hero {
@@ -333,7 +338,7 @@ footer {
 }
 </style>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<noscript><style>.lang, .skip { display: none; }.ribbon { width:100%; }.ribbon ul { flex-wrap:wrap; }.ribbon li { white-space:normal; }.ribbon ul[aria-hidden="true"] { display:none; }</style></noscript>
+<noscript><style>.skip { display: none; }.ribbon { width:100%; }.ribbon ul { flex-wrap:wrap; }.ribbon li { white-space:normal; }.ribbon ul[aria-hidden="true"] { display:none; }</style></noscript>
 </head>
 <body>
 
@@ -349,9 +354,9 @@ footer {
 <div class="glow" id="glow" aria-hidden="true"></div>
 
 <nav class="lang" aria-label="Língua">
-  <button type="button" id="lang-pt" lang="pt" aria-label="PT — Português" data-set-lang="pt" aria-pressed="true">PT</button>
-  <button type="button" id="lang-es" lang="es" aria-label="ES — Español" data-set-lang="es" aria-pressed="false">ES</button>
-  <button type="button" id="lang-en" lang="en" aria-label="EN — English" data-set-lang="en" aria-pressed="false">EN</button>
+  <a id="lang-pt" lang="pt-PT" hreflang="pt-PT" aria-label="PT — Português" href="/" aria-current="page">PT</a>
+  <a id="lang-es" lang="es" hreflang="es" aria-label="ES — Español" href="/es/">ES</a>
+  <a id="lang-en" lang="en" hreflang="en" aria-label="EN — English" href="/en/">EN</a>
 </nav>
 
 <header class="hero">
@@ -419,48 +424,6 @@ footer {
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var root = document.documentElement;
 
-  /* ——— Línguas ——— */
-  var T = {
-    es: {
-      tagline: "Damos luz a ideas en las que creemos.",
-      descriptor: "Agencia boutique de marketing digital, creatividad y crecimiento.",
-      h_what: "Qué hacemos",
-      p_what: "Ayudamos a proyectos con valor real a llegar a más gente, con estrategia, comunicación y creatividad, y con la tecnología a su servicio.",
-      h_how: "Pequeños por elección",
-      p_how1: "Pocos clientes a la vez, toda nuestra atención para cada uno. La inteligencia artificial se ocupa de lo técnico y lo repetitivo. Las ideas, las decisiones y las relaciones quedan en manos de personas.",
-      p_how2: "No imponemos soluciones. Pensamos, imaginamos y construimos juntos.",
-      h_who: "Con quién queremos trabajar",
-      p_who1: "Personas y organizaciones de cualquier tamaño, con proyectos que aporten valor a su entorno. Toda idea necesita recursos para hacerse visible.",
-      p_who2: "Y como todo trabajo tiene valor, el nuestro y el tuyo, buscamos relaciones justas para ambas partes.",
-      h_not: "Lo que no hacemos",
-      n1: "Marketing engañoso", n2: "Promesas que no podemos cumplir", n3: "Promover algo en lo que no creemos",
-      h_talk: "Hablemos",
-      p_talk: "¿Tienes un proyecto en el que crees y que quieres dar a conocer? Escríbenos.",
-      skip: "toca para entrar"
-    },
-    en: {
-      tagline: "We bring light to ideas we believe in.",
-      descriptor: "A boutique agency for digital marketing, creativity and growth.",
-      h_what: "What we do",
-      p_what: "We help projects of genuine worth reach more people through strategy, communication and creativity, with technology at their service.",
-      h_how: "Small by choice",
-      p_how1: "Only a few clients at a time, each with our full attention. AI handles the technical, repetitive work. Ideas, decisions and relationships stay in human hands.",
-      p_how2: "We don't impose solutions. We think, imagine and build with you.",
-      h_who: "Who we'd like to work with",
-      p_who1: "People and organisations of any size, with projects that bring value to those around them. Every idea needs resources to be seen.",
-      p_who2: "And because all work has value – ours and yours – we look for relationships that are fair to both sides.",
-      h_not: "What we don't do",
-      n1: "Misleading marketing", n2: "Promises we can't keep", n3: "Promoting things we don't believe in",
-      h_talk: "Let's talk",
-      p_talk: "Got a project you believe in and want people to know about? Write to us.",
-      skip: "tap to enter"
-    }
-  };
-  var LANG = { pt: "pt-PT", es: "es", en: "en" };
-  var nodes = document.querySelectorAll("[data-i18n]");
-  T.pt = {};
-  nodes.forEach(function (n) { T.pt[n.dataset.i18n] = n.textContent; });
-
   /* leitura que amanhece */
   var readEls = Array.prototype.slice.call(document.querySelectorAll(".beat h2, .beat p"));
   function split(el) {
@@ -484,23 +447,7 @@ footer {
   }
   function splitAll() { if (reduce) return; readEls.forEach(split); light(); }
 
-  function setLang(l) {
-    if (!T[l]) l = "pt";
-    nodes.forEach(function (n) { n.textContent = T[l][n.dataset.i18n]; });
-    root.lang = LANG[l];
-    document.querySelector('.lang').setAttribute('aria-label', {pt: 'Língua', es: 'Idioma', en: 'Language'}[l]);
-    document.querySelectorAll("[data-set-lang]").forEach(function (b) {
-      b.setAttribute("aria-pressed", String(b.dataset.setLang === l));
-    });
-    splitAll();
-    try { localStorage.setItem("alba-lang", l); } catch (e) {}
-  }
-  document.querySelectorAll("[data-set-lang]").forEach(function (b) {
-    b.addEventListener("click", function () { setLang(b.dataset.setLang); });
-  });
-  var saved = null;
-  try { saved = localStorage.getItem("alba-lang"); } catch (e) {}
-  if (saved && saved !== "pt") setLang(saved); else splitAll();
+  splitAll();
   if (!reduce) {
     window.addEventListener("scroll", light, { passive: true });
     window.addEventListener("resize", light);
