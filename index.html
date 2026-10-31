@@ -7,7 +7,13 @@
 <meta name="description" content="Agência boutique de marketing digital, criatividade e crescimento. Damos luz a ideias em que acreditamos.">
 <meta property="og:title" content="ALBA · Marketing Boutique">
 <meta property="og:description" content="Damos luz a ideias em que acreditamos.">
-<meta property="og:url" content="https://estudioalba.com">
+<link rel="canonical" href="https://estudioalba.com/">
+<meta property="og:url" content="https://estudioalba.com/">
+<meta property="og:site_name" content="ALBA">
+<meta property="og:locale" content="pt_PT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ALBA · Marketing Boutique">
+<meta name="twitter:description" content="Damos luz a ideias em que acreditamos.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#F4F3F1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0D0D0C" media="(prefers-color-scheme: dark)">
@@ -195,12 +201,12 @@ body {
   font: 500 .66rem/1 var(--body); letter-spacing: .24em; text-transform: uppercase;
   color: rgba(251, 239, 235, .5);
   background: none; border: 0; cursor: pointer;
-  opacity: 0; pointer-events: none; transition: opacity .6s;
+  opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .6s;
 }
 
 /* estados da abertura */
 html.intro-on body { overflow: hidden; }
-html.intro-on .skip { opacity: 1; pointer-events: auto; }
+html.intro-on .skip { visibility: visible; opacity: 1; pointer-events: auto; }
 html.intro-on .lang, html.intro-on .hero-copy, html.intro-on .wordmark { transition: none; }
 /* primeiro frame antes do JS: tudo o que entra depois começa invisível */
 html.intro-on .lang, html.intro-on .hero-copy, html.intro-on .wordmark { opacity: 0; }
@@ -294,6 +300,7 @@ html.intro-on .lang, html.intro-on .hero-copy, html.intro-on .wordmark { opacity
   max-width: 100%; overflow-wrap: anywhere; user-select: all;
 }
 .mail:hover, .mail:focus-visible { transform: translateY(-3px); box-shadow: 0 18px 40px -16px var(--dawn); outline: none; }
+.mail:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 .mail i { width: .55rem; height: .55rem; border-radius: 50%; background: var(--dawn); flex: none; }
 
 footer {
@@ -316,10 +323,17 @@ footer {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
   .glow { display: none !important; }
+  .ribbon { width: 100%; }
+  .ribbon ul { flex-wrap: wrap; gap: 1.5rem 3rem; padding-inline: 2rem; }
+  .ribbon ul[aria-hidden="true"] { display: none; }
+  .ribbon li { white-space: normal; overflow-wrap: anywhere; }
+
 }
 </style>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<noscript><style>.lang, .skip { display: none; }.ribbon { width:100%; }.ribbon ul { flex-wrap:wrap; }.ribbon li { white-space:normal; }.ribbon ul[aria-hidden="true"] { display:none; }</style></noscript>
 </head>
 <body>
 
@@ -335,9 +349,9 @@ footer {
 <div class="glow" id="glow" aria-hidden="true"></div>
 
 <nav class="lang" aria-label="Língua">
-  <button type="button" id="lang-pt" data-set-lang="pt" aria-pressed="true">PT</button>
-  <button type="button" id="lang-es" data-set-lang="es" aria-pressed="false">ES</button>
-  <button type="button" id="lang-en" data-set-lang="en" aria-pressed="false">EN</button>
+  <button type="button" id="lang-pt" lang="pt" aria-label="PT — Português" data-set-lang="pt" aria-pressed="true">PT</button>
+  <button type="button" id="lang-es" lang="es" aria-label="ES — Español" data-set-lang="es" aria-pressed="false">ES</button>
+  <button type="button" id="lang-en" lang="en" aria-label="EN — English" data-set-lang="en" aria-pressed="false">EN</button>
 </nav>
 
 <header class="hero">
@@ -474,6 +488,7 @@ footer {
     if (!T[l]) l = "pt";
     nodes.forEach(function (n) { n.textContent = T[l][n.dataset.i18n]; });
     root.lang = LANG[l];
+    document.querySelector('.lang').setAttribute('aria-label', {pt: 'Língua', es: 'Idioma', en: 'Language'}[l]);
     document.querySelectorAll("[data-set-lang]").forEach(function (b) {
       b.setAttribute("aria-pressed", String(b.dataset.setLang === l));
     });
