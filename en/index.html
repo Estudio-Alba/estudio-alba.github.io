@@ -15,7 +15,14 @@
 <meta property="og:url" content="https://estudioalba.com/en/">
 <meta property="og:site_name" content="ALBA">
 <meta property="og:locale" content="en_GB">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://estudioalba.com/assets/share-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="ALBA — We bring light to ideas we believe in.">
+<meta name="twitter:image" content="https://estudioalba.com/assets/share-en.png">
+<meta name="twitter:image:alt" content="ALBA — We bring light to ideas we believe in.">
 <meta name="twitter:title" content="ALBA · Marketing Boutique">
 <meta name="twitter:description" content="We bring light to ideas we believe in.">
 <meta property="og:type" content="website">
@@ -336,9 +343,20 @@ footer {
   .ribbon li { white-space: normal; overflow-wrap: anywhere; }
 
 }
+
+.motion-control { position: fixed; top: calc(62px + env(safe-area-inset-top, 0px)); right: calc(14px + env(safe-area-inset-right, 0px)); z-index: 20; padding: 7px 11px; min-height: 32px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink-soft); font: 400 .75rem/1.2 var(--body); cursor: pointer; }
+.motion-control:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+html[data-motion="paused"] { scroll-behavior: auto; }
+html[data-motion="paused"] *, html[data-motion="paused"] *::before, html[data-motion="paused"] *::after { animation-play-state: paused !important; transition: none !important; }
+html[data-motion="paused"] .glow { display: none; }
+html[data-motion="paused"] .ribbon { width:100%; }
+html[data-motion="paused"] .ribbon ul { flex-wrap:wrap; gap:1.5rem 3rem; padding-inline:2rem; }
+html[data-motion="paused"] .ribbon ul[aria-hidden="true"] { display:none; }
+html[data-motion="paused"] .ribbon li { white-space:normal; overflow-wrap:anywhere; }
+@media (prefers-reduced-motion: reduce) { .motion-control { display:none; } }
 </style>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<noscript><style>.skip { display: none; }.ribbon { width:100%; }.ribbon ul { flex-wrap:wrap; }.ribbon li { white-space:normal; }.ribbon ul[aria-hidden="true"] { display:none; }</style></noscript>
+<noscript><style>.motion-control{display:none}.skip { display: none; }.ribbon { width:100%; animation:none; }.ribbon ul { flex-wrap:wrap; }.ribbon li { white-space:normal; }.ribbon ul[aria-hidden="true"] { display:none; }</style></noscript>
 </head>
 <body>
 
@@ -346,7 +364,9 @@ footer {
 (function () {
   try {
     var r = document.documentElement;
-    var seen = sessionStorage.getItem("alba-intro") === "1";
+    var motionPaused = sessionStorage.getItem("alba-motion") === "paused";
+    if (motionPaused) r.setAttribute("data-motion", "paused");
+    var seen = motionPaused || sessionStorage.getItem("alba-intro") === "1";
     if (!seen && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) r.classList.add("intro-on");
   } catch (e) {}
 })();
@@ -358,6 +378,7 @@ footer {
   <a id="lang-es" lang="es" hreflang="es" aria-label="ES — Español" href="/es/">ES</a>
   <a id="lang-en" lang="en" hreflang="en" aria-label="EN — English" href="/en/" aria-current="page">EN</a>
 </nav>
+<button type="button" class="motion-control" id="motion-control" aria-pressed="false">Pause motion</button>
 
 <header class="hero">
   <canvas id="scene" aria-hidden="true"></canvas>
@@ -421,7 +442,7 @@ footer {
 
 <script>
 (function () {
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var reduce = document.documentElement.dataset.motion === "paused" || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var root = document.documentElement;
 
   /* leitura que amanhece */
@@ -523,6 +544,7 @@ footer {
   window.addEventListener("pointermove", function (e) { mx = e.clientX / window.innerWidth; my = e.clientY / window.innerHeight; }, { passive: true });
   function ease(x) { return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
 
+  var canvasFrame = null;
   function frame(now) {
     if (!introDone) {
       if (last !== null) prog += Math.min(50, now - last) * speed / INTRO;
@@ -636,22 +658,43 @@ footer {
 
     ctx.restore();
     if (!introDone && prog >= 1) finishIntro();
-    if (!reduce) requestAnimationFrame(frame);
+    if (!reduce) canvasFrame = requestAnimationFrame(frame);
   }
   readPal(); size();
   window.addEventListener("resize", function () { size(); if (reduce) frame(performance.now()); });
   var mq = window.matchMedia("(prefers-color-scheme: dark)");
   if (mq.addEventListener) mq.addEventListener("change", function () { readPal(); if (reduce) frame(performance.now()); });
   new MutationObserver(function () { readPal(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
-  requestAnimationFrame(frame);
+  canvasFrame = requestAnimationFrame(frame);
+
+  var motionButton = document.getElementById('motion-control');
+  var systemMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var paused = root.dataset.motion === 'paused';
+  function applyMotion() {
+    reduce = paused || systemMotion.matches;
+    if (reduce) root.setAttribute('data-motion', 'paused'); else root.removeAttribute('data-motion');
+    motionButton.textContent = paused ? "Resume motion" : "Pause motion";
+    motionButton.setAttribute('aria-pressed', String(paused));
+    cancelAnimationFrame(canvasFrame);
+    if (reduce) { prog = 1; if (!introDone) finishIntro(); readEls.forEach(function(el) { el.querySelectorAll('.w').forEach(function(w) { w.classList.add('lit'); }); }); }
+    last = null;
+    frame(performance.now());
+  }
+  motionButton.addEventListener('click', function() { paused = !paused; try { sessionStorage.setItem('alba-motion', paused ? 'paused' : 'running'); } catch(e) {} applyMotion(); });
+  if (systemMotion.addEventListener) systemMotion.addEventListener('change', applyMotion);
+  if (paused) applyMotion();
 
   /* ——— Luz do cursor ——— */
   var glow = document.getElementById("glow");
-  if (!reduce && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     var gx = 0, gy = 0, tx = 0, ty = 0;
     window.addEventListener("pointermove", function (ev) { tx = ev.clientX; ty = ev.clientY; glow.classList.add("on"); }, { passive: true });
     document.addEventListener("pointerleave", function () { glow.classList.remove("on"); });
-    (function follow() { gx += (tx - gx) * .12; gy += (ty - gy) * .12; glow.style.transform = "translate(" + gx + "px," + gy + "px)"; requestAnimationFrame(follow); })();
+    var glowFrame = null; function follow() { if (reduce) return; gx += (tx - gx) * .12; gy += (ty - gy) * .12; glow.style.transform = "translate(" + gx + "px," + gy + "px)"; glowFrame = requestAnimationFrame(follow); }
+    function restartGlow() { cancelAnimationFrame(glowFrame); if (!reduce) follow(); }
+    restartGlow();
+    motionButton.addEventListener("click", restartGlow);
+    systemMotion.addEventListener("change", restartGlow);
   }
 })();
 </script>
