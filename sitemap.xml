@@ -21,4 +21,25 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://estudioalba.com/en/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://estudioalba.com/" />
   </url>
+  <url>
+    <loc>https://estudioalba.com/privacidade/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://estudioalba.com/privacidade/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://estudioalba.com/es/privacidad/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://estudioalba.com/en/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://estudioalba.com/privacidade/" />
+  </url>
+  <url>
+    <loc>https://estudioalba.com/es/privacidad/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://estudioalba.com/privacidade/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://estudioalba.com/es/privacidad/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://estudioalba.com/en/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://estudioalba.com/privacidade/" />
+  </url>
+  <url>
+    <loc>https://estudioalba.com/en/privacy/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-PT" href="https://estudioalba.com/privacidade/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://estudioalba.com/es/privacidad/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://estudioalba.com/en/privacy/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://estudioalba.com/privacidade/" />
+  </url>
 </urlset>

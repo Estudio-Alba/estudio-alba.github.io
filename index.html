@@ -370,6 +370,9 @@ html[data-motion="paused"] .ribbon li { white-space:normal; overflow-wrap:anywhe
 @media (hover: hover) { .share-control:hover::after { visibility: visible; opacity: 1; } }
 .share-control:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .share-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.privacy-link { display:inline-block; margin-left:1.2em; padding:8px 0; color:inherit; text-underline-offset:3px; }
+.privacy-link:focus-visible { outline:2px solid currentColor; outline-offset:4px; }
 </style>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <noscript><style>.share-control{display:none}.motion-control{display:none}.skip { display: none; }.ribbon { width:100%; animation:none; }.ribbon ul { flex-wrap:wrap; }.ribbon li { white-space:normal; }.ribbon ul[aria-hidden="true"] { display:none; }</style></noscript>
@@ -456,7 +459,7 @@ html[data-motion="paused"] .ribbon li { white-space:normal; overflow-wrap:anywhe
   </section>
 </main>
 
-<footer class="gutter"><span class="foot-heron" aria-hidden="true"></span>ALBA · Marketing Boutique</footer>
+<footer class="gutter"><span class="foot-heron" aria-hidden="true"></span>ALBA · Marketing Boutique <a class="privacy-link" href="/privacidade/">Privacidade</a></footer>
 
 <script>
 (function () {
